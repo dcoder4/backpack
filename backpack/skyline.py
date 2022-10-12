@@ -256,7 +256,7 @@ class SkyLine(ABC):
         return fps, width, height
 
     def _try_open_stream(self, fps, width, height):
-        self.logger("Attempt to open stream..")
+        self.logger.info("Attempt to open stream..")
         if not self._open_stream(fps, width, height):
             self.logger.warning('Could not open cv2.VideoWriter')
             self.state = SkyLine.State.ERROR
