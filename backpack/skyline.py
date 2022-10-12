@@ -15,6 +15,7 @@ from collections import OrderedDict
 import datetime
 from enum import Enum
 from typing import Optional
+import traceback
 from abc import ABC, abstractmethod
 
 try:
@@ -212,18 +213,26 @@ class SkyLine(ABC):
         self.logger.info('UTC time on host: %s', datetime.datetime.utcnow().isoformat())
 
     def _open_stream(self, fps, width, height):
-        pipeline = self._get_pipeline(fps, width, height)
-        self.logger.info('Opening streaming pipeline')
-        self._video_writer = cv2.VideoWriter(
-            pipeline, cv2.CAP_GSTREAMER, 0, fps, (width, height)
-        )
-        self.video_fps = fps
-        self.video_width = width
-        self.video_height = height
-        self._last_fps = fps
-        self._last_width = width
-        self._last_height = height
-        return self._video_writer.isOpened()
+        try:
+            self.logger.info('Getting pipeline')
+            pipeline = self._get_pipeline(fps, width, height)
+            self.logger.info('Opening streaming pipeline')
+            self._video_writer = cv2.VideoWriter(
+                pipeline, cv2.CAP_GSTREAMER, 0, fps, (width, height)
+            )
+            self.video_fps = fps
+            self.video_width = width
+            self.video_height = height
+            self._last_fps = fps
+            self._last_width = width
+            self._last_height = height
+            return self._video_writer.isOpened()
+        except:
+            # printing stack trace
+            traceback.print_exc()
+            self.logger.error('Error! Could not open cv2.VideoWriter')
+            return self._video_writer.isOpened()
+
 
     def _close_stream(self):
         if self._video_writer:
