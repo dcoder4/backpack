@@ -1,5 +1,7 @@
 ''' Utilities for AWS Panorama application development. '''
 
+__version__ = '0.1.8'
+
 import functools
 
 def lazy_property(func):
